@@ -36,8 +36,8 @@ Let's say we want to compress `IntelliJ IDEA`.
 
    - Run `afsctool -c -J6 -T LZFSE /Applications/IntelliJ\ IDEA.app`
    - `-c`: apply compression
-   - `-J6`: compress using 6 threads to speed up the process. You can adjust this by yourself.
-   - `-T LZFSE`: use `LZFSE` compressor. `LZFSE` is a fast and efficient compression method. That's way I created this repo and release binaries with `LZFSE` support (while the `afsctool` from HomeBrew doesn't have `LZFSE` built-in).
+   - `-J6`: compress using 6 threads to speed up the process. You can adjust how many threads you want by yourself.
+   - `-T LZFSE`: use `LZFSE` compressor. `LZFSE` is a fast and efficient compression method. That's why I created this repo and release binaries with `LZFSE` support (while the `afsctool` from HomeBrew doesn't have `LZFSE` built-in).
 
 2. Check the results
 
