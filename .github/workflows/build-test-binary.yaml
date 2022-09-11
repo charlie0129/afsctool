@@ -33,7 +33,7 @@ jobs:
       - name: Get Target
         id: get_target
         run: |
-          TARGET=${{ matrix.targets }}
+          TARGETS=${{ matrix.targets }}
           echo ::set-output name=SDK_VERSION::${TARGETS%/*}
           echo ::set-output name=ARCH::${TARGETS#*/}
 
