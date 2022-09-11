@@ -1,0 +1,48 @@
+name: Build Test afsctool Binaries
+
+on:
+  push:
+    branches:
+      - main
+      - release-*
+    tags:
+      - "v*"
+  pull_request:
+    branches:
+      - main
+      - release-*
+  workflow_dispatch: { }
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build and Upload afsctool Binaries
+    runs-on: macos-11
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: Get Version
+        id: get_version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          echo ::set-output name=VERSION::${VERSION}
+          echo ::set-output name=SDK_VERSION::$(xcrun --show-sdk-version)
+      
+      - name: Build Binaries
+        run: |
+          mkdir build
+          cd build
+          cmake -Wno-dev ..
+          make -j$(sysctl -n hw.ncpu)
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: afsctool-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_version.outputs.SDK_VERSION }}
+          path: |
+            build/afsctool
