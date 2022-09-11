@@ -15,7 +15,7 @@
 #endif
 
 #include <algorithm>
-#include <cmath>
+#include <math.h>
 
 #include "ParallelProcess_p.hpp"
 #include "ParallelProcess.h"
@@ -311,7 +311,7 @@ int ParallelFileProcessor::run()
 						}
 						if (thread->m_ThreadCtx.m_runTime > 0) {
 							const auto rcu = (thread->userTime + thread->systemTime) * 100.0 / thread->m_ThreadCtx.m_runTime;
-							if (std::fabs(rcu - acu) > 5) {
+							if (fabs(rcu - acu) > 5) {
 								fprintf(stderr, "; %0.2lf%% real", rcu);
 							}
 						}

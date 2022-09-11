@@ -21,7 +21,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          brew install google-sparsehash pkgconfig
+          brew install google-sparsehash
 
       - name: Get Version
         id: get_version
