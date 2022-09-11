@@ -13,6 +13,13 @@ jobs:
   build:
     name: Build and Upload afsctool Binaries
     runs-on: macos-11
+    strategy:
+      matrix:
+        targets:
+         - 11.7/x86_64
+         - 12.5.1/x86_64
+         - 12.5.1/arm64
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -23,9 +30,16 @@ jobs:
         run: |
           brew install google-sparsehash
 
+      - name: Get Target
+        id: get_target
+        run: |
+          TARGET=${{ matrix.targets }}
+          echo ::set-output name=SDK_VERSION::${TARGETS%/*}
+          echo ::set-output name=ARCH::${TARGETS#*/}
+
       - name: Switch Xcode Version
         run: |
-          sudo xcode-select -s /Applications/Xcode_11.7.app
+          sudo xcode-select -s /Applications/Xcode_${{ steps.get_target.outputs.SDK_VERSION }}.app
 
       - name: Get Version
         id: get_version
@@ -33,18 +47,22 @@ jobs:
           VERSION=${GITHUB_REF#refs/tags/}
           VERSION=${VERSION#refs/heads/}
           echo ::set-output name=VERSION::${VERSION}
-          echo ::set-output name=SDK_VERSION::$(xcrun --show-sdk-version)
       
       - name: Build Binaries
         run: |
           mkdir build
           cd build
-          cmake -Wno-dev ..
+          cmake -Wno-dev -DCMAKE_CXX_FLAGS="-arch ${{ steps.get_target.outputs.ARCH }}" ..
           make -j$(sysctl -n hw.ncpu)
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: afsctool-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_version.outputs.SDK_VERSION }}
+          name: afsctool-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_target.outputs.SDK_VERSION }}-${{ steps.get_target.outputs.ARCH }}
           path: |
             build/afsctool
+      
+      - name: Clean Build Artifacts
+        run: |
+          cd build
+          make clean
