@@ -60,13 +60,17 @@ jobs:
           cmake -Wno-dev -DCMAKE_CXX_FLAGS="-arch ${{ steps.get_target.outputs.ARCH }}" ..
           make -j$(sysctl -n hw.ncpu)
 
+      - name: Test
+        run: |
+          build/afsctool -c -J2 -T LZFSE .github
+
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
           name: afsctool-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_sdk_version.outputs.SDK_VERSION }}-${{ steps.get_target.outputs.ARCH }}
           path: |
             build/afsctool
-      
+
       - name: Clean Build Artifacts
         run: |
           cd build

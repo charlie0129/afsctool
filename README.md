@@ -29,7 +29,41 @@ TODO:
 - Move the binary to somewhere in your PATH.
   - For example: `cp afsctool /usr/local/bin`
 
-## Compile
+## Examples
+
+`afsctool` can use the filesystem API to do transparent compression. Decompression is done by the filesystem on-the-fly, so you can save disk space while everything works just like before. In fact, Apple already does transparent compression internally (e.g. apps downloaded from the App Store and some system application). So, this is something Apple is already doing behind the scene.
+
+However, unlike ZFS compression, Apple's implementation of filesystem compression doesn't automatically do compression on newly added files. **Thus, you should only apply this to files that do not or rarely change.** Application files are the prime candidate for this.
+
+Let's say we want to compress `IntelliJ IDEA`.
+
+1. Compress `IntelliJ IDEA.app`
+
+   - Run `afsctool -c -J6 -T LZFSE /Applications/IntelliJ\ IDEA.app`
+   - `-c`: apply compression
+   - `-J6`: compress using 6 threads to speed up the process. You can adjust this by yourself.
+   - `-T LZFSE`: use `LZFSE` compressor. `LZFSE` is a fast and efficient compression method. That's way I created this repo and release binaries with `LZFSE` support (while the `afsctool` from HomeBrew doesn't have `LZFSE` built-in).
+
+2. Check the results
+
+   - `afsctool -v /Applications/IntelliJ\ IDEA.app`
+
+     ```
+     /Applications/IntelliJ IDEA.app/:
+     Number of HFS+/APFS compressed files: 3189
+     Total number of files: 3439
+     Total number of folders: 1118
+     Total number of items (number of files + number of folders): 4557
+     Folder size (uncompressed; reported size by Mac OS 10.6+ Finder): 2891214455 bytes / 2.9 GB (gigabytes, base-10)
+     Folder size (compressed): 1011724848 bytes / 965.7 MiB
+     Compression savings: 65.0% over 3189 of 3439 files
+     Approximate total folder size (files + file overhead + folder overhead): 1013166648 bytes / 966.2 MiB
+     ```
+
+   - We have saved about **2GB** of disk space or reduced IDEA to only **65%** of the original size: `2.9 GB` -> `965.7 MiB`.
+
+## Compiling Guide
+
 ### Install Dependencies
 
 afsctool depends on zlib (v1.2.8 or newer) and Google's sparsehash library and on CMake
