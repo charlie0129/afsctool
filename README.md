@@ -89,7 +89,7 @@ PKG_CONFIG_PATH=/usr/local/opt/zlib/lib/pkgconfig
 With the dependencies installed you can now build afsctool. In a directory of your choice:
 
 ```shell
-git clone --recurse-submodules git://github.com/RJVB/afsctool
+git clone --recurse-submodules https://github.com/charlie0129/afsctool.git
 mkdir afsctool/build
 cd afsctool/build
 cmake -Wno-dev ..
