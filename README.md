@@ -57,6 +57,8 @@ Let's say we want to compress `IntelliJ IDEA`.
 
    - As we can see, we reduced IDEA to only **35%** of its original size: `2.9 GB` -> `965.7 MiB`.
 
+3. Then you can forget about it. Everything will work just like before.
+
 ## Compiling Guide
 
 ### Install Dependencies
