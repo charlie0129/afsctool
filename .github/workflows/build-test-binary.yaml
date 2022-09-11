@@ -35,12 +35,12 @@ jobs:
         id: get_target
         run: |
           TARGETS=${{ matrix.targets }}
-          echo ::set-output name=SDK_VERSION::${TARGETS%/*}
+          echo ::set-output name=XCODE_VERSION::${TARGETS%/*}
           echo ::set-output name=ARCH::${TARGETS#*/}
 
       - name: Switch Xcode Version
         run: |
-          sudo xcode-select -s /Applications/Xcode_${{ steps.get_target.outputs.SDK_VERSION }}.app
+          sudo xcode-select -s /Applications/Xcode_${{ steps.get_target.outputs.XCODE_VERSION }}.app
 
       - name: Get Version
         id: get_version
@@ -48,7 +48,12 @@ jobs:
           VERSION=${GITHUB_REF#refs/tags/}
           VERSION=${VERSION#refs/heads/}
           echo ::set-output name=VERSION::${VERSION}
-      
+        
+      - name: Get SDK Version
+        id: get_sdk_version
+        run: |
+          echo ::set-output name=SDK_VERSION::$(xcrun --show-sdk-version)
+
       - name: Build Binaries
         run: |
           mkdir build
@@ -59,7 +64,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: afsctool-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_target.outputs.SDK_VERSION }}-${{ steps.get_target.outputs.ARCH }}
+          name: afsctool-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_sdk_version.outputs.SDK_VERSION }}-${{ steps.get_target.outputs.ARCH }}
           path: |
             build/afsctool
       
