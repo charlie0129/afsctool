@@ -60,7 +60,7 @@ Let's say we want to compress `IntelliJ IDEA`.
      Approximate total folder size (files + file overhead + folder overhead): 1013166648 bytes / 966.2 MiB
      ```
 
-   - We have saved about **2GB** of disk space or reduced IDEA to only **65%** of the original size: `2.9 GB` -> `965.7 MiB`.
+   - As we can see, we reduced IDEA to only **35%** of its original size: `2.9 GB` -> `965.7 MiB`.
 
 ## Compiling Guide
 

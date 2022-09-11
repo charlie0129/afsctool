@@ -60,7 +60,7 @@ jobs:
           cmake -Wno-dev -DCMAKE_CXX_FLAGS="-arch ${{ steps.get_target.outputs.ARCH }}" ..
           make -j$(sysctl -n hw.ncpu)
 
-      - name: Test
+      - name: Test Compression
         run: |
           build/afsctool -c -J2 -T LZFSE .github
 
