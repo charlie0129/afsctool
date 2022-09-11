@@ -31,6 +31,7 @@ jobs:
         id: get_version
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
+          VERSION=${VERSION#refs/heads/}
           echo ::set-output name=VERSION::${VERSION}
           echo ::set-output name=SDK_VERSION::$(xcrun --show-sdk-version)
       
