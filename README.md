@@ -5,7 +5,7 @@ to apply HFS+ compression to file(s), decompress HFS+ compressed file(s), or
 get information about existing HFS+ compressed file(s).
 Mac OS 10.6 or later is required. See: https://brkirch.wordpress.com/afsctool/
 
-Refer to [RJVB/afsctool](https://github.com/RJVB/afsctool) for details.
+This is a fork of [RJVB/afsctool](https://github.com/RJVB/afsctool).
 
 Currently 09/11/22, the original repo [RJVB/afsctool](https://github.com/RJVB/afsctool) is having some build issues, and the HomeBrew one doesn't come with `LZFSE` support.
 
@@ -13,11 +13,6 @@ So, my main modifications are:
 
 - Make the compiler happy.
 - Use GitHub Actions to release binaries **with `LZFSE` support**.
-
-TODO:
-
-- [ ] `arm64` support
-- [ ] Fix build issues with `macosx12.0` SDK
 
 ## Installation
 
@@ -106,3 +101,8 @@ default:
 cd afsctool/build
 sudo make install/fast V=1 VERBOSE=1
 ```
+
+## TODO:
+
+- [ ] `arm64` support
+- [ ] Fix build issues with `macosx12.0` SDK
