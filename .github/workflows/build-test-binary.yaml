@@ -16,11 +16,15 @@ jobs:
     strategy:
       matrix:
         targets:
-         - 11.7/x86_64
-         - 12.5.1/x86_64
+         - 11.7/x86_64-apple-macos10.15
+         - 12.5.1/x86_64-apple-macos11
          # No arm64 support currently
 
     steps:
+      - name: Get build machine info
+        run: |
+          system_profiler SPSoftwareDataType SPHardwareDataType
+
       - name: Checkout Code
         uses: actions/checkout@v3
         with:
@@ -30,34 +34,36 @@ jobs:
         run: |
           brew install google-sparsehash
 
-      - name: Get Target
-        id: get_target
-        run: |
-          TARGETS=${{ matrix.targets }}
-          echo ::set-output name=XCODE_VERSION::${TARGETS%/*}
-          echo ::set-output name=ARCH::${TARGETS#*/}
-
       - name: Switch Xcode Version
         run: |
-          sudo xcode-select -s /Applications/Xcode_${{ steps.get_target.outputs.XCODE_VERSION }}.app
+          TARGETS=${{ matrix.targets }}
+          sudo xcode-select -s /Applications/Xcode_${TARGETS%/*}.app
 
       - name: Get Version
         id: get_version
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
           VERSION=${VERSION#refs/heads/}
-          echo ::set-output name=VERSION::${VERSION}
+          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
         
       - name: Get SDK Version
         id: get_sdk_version
         run: |
-          echo ::set-output name=SDK_VERSION::$(xcrun --show-sdk-version)
+          xcrun --show-sdk-version
+          echo "SDK_VERSION=$(xcrun --show-sdk-version)" >> $GITHUB_OUTPUT
+
+      - name: Get Target
+        id: get_target
+        run: |
+          TARGETS=${{ matrix.targets }}
+          echo "TARGET=${TARGETS#*/}" >> $GITHUB_OUTPUT
 
       - name: Build Binaries
         run: |
           mkdir build
           cd build
-          cmake -Wno-dev -DCMAKE_CXX_FLAGS="-arch ${{ steps.get_target.outputs.ARCH }}" ..
+          TARGETS=${{ matrix.targets }}
+          cmake -Wno-dev -DCMAKE_CXX_FLAGS="-target ${TARGETS#*/}" ..
           make -j$(sysctl -n hw.ncpu)
 
       - name: Test Compression
@@ -67,7 +73,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: afsctool-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_sdk_version.outputs.SDK_VERSION }}-${{ steps.get_target.outputs.ARCH }}
+          name: afsctool-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_target.outputs.TARGET }}
           path: |
             build/afsctool
 
