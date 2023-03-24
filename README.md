@@ -24,7 +24,17 @@ So, my main modifications are:
 - Move the binary to somewhere in your PATH.
   - For example: `cp afsctool /usr/local/bin`
 
-## Examples
+## Usage
+
+**tl;dr:** to apply LZFSE compression to a file or directory, use this command. Keep reading for explanations.
+
+```shell
+afsctool \
+  -c \
+  -J$(sysctl -n hw.physicalcpu) \
+  -T LZFSE \
+  /path/to/file/or/dir/to/compress
+```
 
 `afsctool` can use the filesystem API to do transparent compression. Decompression is done by the filesystem on-the-fly, so you can save disk space while everything works just like before. In fact, Apple already does transparent compression internally (e.g. apps downloaded from the App Store and some system application). So, this is something Apple is already doing behind the scene.
 
@@ -34,9 +44,9 @@ Let's say we want to compress `IntelliJ IDEA`.
 
 1. Compress `IntelliJ IDEA.app`
 
-   - Run `afsctool -c -J6 -T LZFSE /Applications/IntelliJ\ IDEA.app`
+   - Run `afsctool -c -J$(sysctl -n hw.physicalcpu) -T LZFSE /Applications/IntelliJ\ IDEA.app`
    - `-c`: apply compression
-   - `-J6`: compress using 6 threads to speed up the process. You can adjust how many threads you want by yourself.
+   - `-J$(sysctl -n hw.physicalcpu)`: compress using _x_ threads to speed up the process, where _x_ is equal to the number of physical CPU cores you have. You can adjust how many threads you want by yourself.
    - `-T LZFSE`: use `LZFSE` compressor. `LZFSE` is a fast and efficient compression method. That's why I created this repo and release binaries with `LZFSE` support (while the `afsctool` from HomeBrew doesn't have `LZFSE` built-in).
 
 2. Check the results
